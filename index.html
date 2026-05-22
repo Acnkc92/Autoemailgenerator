@@ -4,15 +4,256 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HP Customer Support Email Generator</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #0096d6;
+            --secondary-color: #003da5;
+            --success-color: #28a745;
+            --text-dark: #212529;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px 20px;
+            flex-grow: 1;
+        }
+
+        .form-section, .preview-section {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 150, 214, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-copy {
+            background: var(--success-color);
+            color: white;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+
+        .btn-copy:hover {
+            opacity: 0.9;
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .email-preview {
+            background: var(--bg-light);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 600px;
+            min-height: 400px;
+        }
+
+        .placeholder {
+            color: var(--text-light);
+            text-align: center;
+            padding: 50px 20px;
+            font-style: italic;
+        }
+
+        .copy-feedback {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .copy-feedback.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <div class="header-content">
-                <h1>HP Customer Support Email Generator</h1>
-                <p class="subtitle">Professional multilingual email generation for HP support advisors</p>
-            </div>
+            <h1>HP Customer Support Email Generator</h1>
+            <p>Professional multilingual email generation for HP support advisors</p>
         </header>
 
         <div class="main-content">
@@ -20,7 +261,7 @@
                 <h2>Email Configuration</h2>
                 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div>
                         <label for="language">Select Language *</label>
                         <select id="language" required>
                             <option value="en">English</option>
@@ -36,8 +277,7 @@
                             <option value="es">Spanish</option>
                         </select>
                     </div>
-
-                    <div class="form-group">
+                    <div>
                         <label for="template">Select Template *</label>
                         <select id="template" required>
                             <option value="status-update">Status Update</option>
@@ -51,78 +291,206 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div>
                         <label for="customerName">Customer Name *</label>
                         <input type="text" id="customerName" placeholder="Enter customer name" required>
                     </div>
-
-                    <div class="form-group">
+                    <div>
                         <label for="advisorName">Advisor Name *</label>
                         <input type="text" id="advisorName" placeholder="Enter your name" required>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div>
                         <label for="caseRef">Case Reference Number *</label>
                         <input type="text" id="caseRef" placeholder="e.g., HPC-2024-123456" required>
                     </div>
-
-                    <div class="form-group">
+                    <div>
                         <label for="serialNumber">HP Serial Number *</label>
                         <input type="text" id="serialNumber" placeholder="e.g., SN-ABC-123456" required>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group full-width">
+                <div class="form-row full">
+                    <div>
                         <label for="issueDetails">Issue Details *</label>
-                        <textarea id="issueDetails" placeholder="Describe the issue reported by the customer" rows="3" required></textarea>
+                        <textarea id="issueDetails" placeholder="Describe the issue" required></textarea>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group full-width">
+                <div class="form-row full">
+                    <div>
                         <label for="additionalContext">Additional Context</label>
-                        <textarea id="additionalContext" placeholder="Add any additional information (optional)" rows="2"></textarea>
+                        <textarea id="additionalContext" placeholder="Optional additional information"></textarea>
                     </div>
                 </div>
 
-                <div id="customNotesSection" class="form-row" style="display: none;">
-                    <div class="form-group full-width">
+                <div id="customNotesSection" class="form-row full" style="display: none;">
+                    <div>
                         <label for="customNotes">Custom Email Body</label>
-                        <textarea id="customNotes" placeholder="Enter your custom email message (used when 'Custom' template is selected)" rows="4"></textarea>
+                        <textarea id="customNotes" placeholder="Enter your custom message"></textarea>
                     </div>
                 </div>
 
                 <div class="button-group">
-                    <button class="btn btn-primary" onclick="generateEmail()">Generate Email</button>
-                    <button class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    <button class="btn-primary" onclick="generateEmail()">Generate Email</button>
+                    <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
                 </div>
             </div>
 
             <div class="preview-section">
                 <div class="preview-header">
                     <h2>Email Preview</h2>
-                    <button class="btn btn-copy" onclick="copyToClipboard()">
-                        <span class="copy-icon">📋</span>
-                        Copy to Clipboard
-                    </button>
+                    <button class="btn-copy" onclick="copyToClipboard()">📋 Copy</button>
                 </div>
                 
                 <div class="email-preview" id="emailPreview">
                     <div class="placeholder">Generated email will appear here...</div>
                 </div>
                 
-                <div id="copyFeedback" class="copy-feedback">✓ Email copied to clipboard!</div>
+                <div id="copyFeedback" class="copy-feedback">✓ Email copied!</div>
             </div>
         </div>
 
         <footer class="footer">
-            <p>HP Customer Support Email Generator v1.0 | Multilingual Support | Enterprise Ready</p>
+            <p>HP Customer Support Email Generator v1.0 | Ready to Use</p>
         </footer>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        const templates = {
+            'status-update': {
+                en: `Kindly confirm if the reported issue that you were experiencing with the HP PC has been resolved or would you need further assistance.\n\nFor any further issues or concerns in future you may revert on this email and we shall be able to help you accordingly.\n\nIf the information provided was helpful to you, then kindly confirm if we may close the case.\n\nOnce again, thank you for contacting HP.`,
+                cs: `Laskavě potvrďte, zda byl hlášený problém vyřešen, nebo byste potřebovali další pomoc.\n\nBudete informováni e-mailem nebo telefonem ohledně pokroku.\n\nPokud byly informace užitečné, potvrďte prosím uzavření případu.\n\nDěkujeme za kontakt s HP.`,
+                nl: `Kunt u alstublieft bevestigen of het gemelde probleem is opgelost of verdere hulp nodig hebt.\n\nVoor toekomstige vragen kunt u altijd op deze e-mail reageren.\n\nMocht alles helpen, kunt u alstublieft bevestigen voor sluiting.\n\nHartelijk dank voor contact met HP.`,
+                hu: `Kérjük, erősítse meg, hogy a probléma megoldódott-e vagy szükséges-e további segítség.\n\nBármilyen jövőbeli kérdés esetén keresse meg ezt az e-mailt.\n\nHa az információ hasznos volt, kérjük, erősítse meg az eset lezárásához.\n\nKöszönjük HP-vel való kapcsolatot.`,
+                it: `Si prega di confermare se il problema è stato risolto o se è necessaria assistenza ulteriore.\n\nPer futuri problemi, potete rispondere a questa e-mail.\n\nSe le informazioni vi sono state utili, confermate la chiusura del caso.\n\nGrazie per aver contattato HP.`,
+                pl: `Proszę potwierdzić, czy problem został rozwiązany lub potrzebna jest dalsze pomoc.\n\nWszelkie przyszłe pytania możesz zadać na ten e-mail.\n\nJeśli informacje były pomocne, potwierdź zamknięcie sprawy.\n\nDziękujemy za kontakt z HP.`,
+                ro: `Vă rugăm să confirmați dacă problema a fost rezolvată sau dacă aveți nevoie de asistență suplimentară.\n\nPentru viitoarele probleme, puteți răspunde la acest e-mail.\n\nDacă informațiile au fost utile, confirmați închiderea cazului.\n\nVă mulțumim pentru contactarea HP.`,
+                sr: `Molimo da potvrdite da li je problem rešen ili vam je potrebna dalja pomoć.\n\nZa buduće probleme, možete odgovoriti na ovaj e-mail.\n\nAko su informacije bile korisne, potrdite zatvaranje slučaja.\n\nHvala za kontakt sa HP.`,
+                sk: `Prosím potvrďte, či bol problém vyriešený alebo potrebujete ďalšiu pomoc.\n\nPre budúce otázky môžete odpovedať na tento e-mail.\n\nAk boli informácie užitočné, potvrďte uzavretie prípadu.\n\nĎakujeme za kontakt s HP.`,
+                sl: `Prosim, potrdite ali je problem rešen ali potrebujete dodatno pomoč.\n\nZa prihodnja vprašanja lahko odgovorite na ta e-poštni naslov.\n\nČe so bile informacije koristne, potrdite zapiranje primera.\n\nHvala, da ste se obrnili na HP.`,
+                es: `Por favor, confirme si el problema ha sido resuelto o si necesita asistencia adicional.\n\nPara futuras preguntas, puede responder a este correo electrónico.\n\nSi la información fue útil, confirme el cierre del caso.\n\nGracias por contactar a HP.`
+            },
+            'closure': {
+                en: `We have attempted to contact you three times but have not received a response. We will proceed with moving the case to closure. Contact us with the same case reference if you need further assistance.`,
+                cs: `Pokusili jsme se s vámi kontaktovat třikrát, ale bez odpovědi. Budeme pokračovat v uzavření. Kontaktujte nás se stejným číslem případu.`,
+                nl: `We hebben driemaal geprobeerd contact op te nemen, maar geen respons ontvangen. We zullen overgaan tot sluiting. Neem contact met ons op met hetzelfde zaaknummer.`,
+                hu: `Háromszor próbáltunk kapcsolatba lépni, de nem kaptunk választ. Folytatjuk az eset lezárásával. Forduljon hozzánk ugyanazzal az esetzámmal.`,
+                it: `Abbiamo tentato di contattarvi tre volte ma non abbiamo ricevuto risposta. Procederemo con la chiusura. Contattateci con lo stesso numero di caso.`,
+                pl: `Próbowaliśmy się z Tobą skontaktować trzy razy, ale bez odpowiedzi. Będziemy kontynuować zamknięcie. Skontaktuj się z nami tym samym numerem sprawy.`,
+                ro: `Am încercat de trei ori fără răspuns. Vom proceda la închidere. Contactați-ne cu același număr de caz.`,
+                sr: `Pokušali smo da vas kontaktiramo tri puta bez odgovora. Nastavljamo sa zatvaranjem. Kontaktirajte nas sa istim brojem slučaja.`,
+                sk: `Pokúšali sme sa skontaktovať trikrát bez odpovede. Pokračujeme v zatváraní. Kontaktujte nás s tým istým číslom prípadu.`,
+                sl: `Tri krat smo poskušali z odgovorom. Nadaljevamo z zapiranjem. Kontaktirajte nas z isto številko primera.`,
+                es: `Hemos intentado contactarle tres veces sin respuesta. Procederemos con el cierre. Contactenos con el mismo número de caso.`
+            },
+            'part-backordered': {
+                en: `The part is back-ordered. The case has been escalated to our Logistics Team working on an ETA. You will be kept informed via email or phone regarding the status.`,
+                cs: `Součástka je vyprodána. Případ byl eskalován logistickému týmu. Budete informováni e-mailem nebo telefonem.`,
+                nl: `Het onderdeel is niet op voorraad. Het geval is geëscaleerd naar ons logistieke team. U wordt per e-mail of telefoon geïnformeerd.`,
+                hu: `Az alkatrész nincs készleten. Az eset eszkalálva lett a logisztikai csapathoz. E-mailon vagy telefonon értesítjük Önt.`,
+                it: `Il componente è esaurito. Il caso è stato escalato al team logistico. Verrete informati via e-mail o telefono.`,
+                pl: `Część jest niedostępna. Sprawa została eskalowana do zespołu logistyki. Będziesz informowany e-mailem lub telefonem.`,
+                ro: `Componenta este indisponibilă. Cazul a fost escalat echipei de logistică. Veți fi informat prin e-mail sau telefon.`,
+                sr: `Deo je nedostupan. Slučaj je eskaliran logističkom timu. Biće vas obavešteni e-poštom ili telefonom.`,
+                sk: `Diely sú nedostupné. Prípad bol eskalovaný logistickému tímu. Budete informovaní e-mailom alebo telefonom.`,
+                sl: `Del ni na zalogi. Primer je bil eskaliran logističnemu timu. Obveščeni boste po e-pošti ali telefonu.`,
+                es: `La pieza está indisponible. El caso ha sido escalado al equipo logístico. Se le informará por correo electrónico o teléfono.`
+            },
+            'trade': {
+                en: `You will shortly receive a quotation for the repair. The service will commence once we receive your approval and payment is confirmed.`,
+                cs: `Brzy obdržíte nabídku na opravu. Služba začne po schválení a potvrzení platby.`,
+                nl: `U ontvangt binnenkort een offerte voor reparatie. De service begint na goedkeuring en betalingsbevestiging.`,
+                hu: `Hamarosan megkapja a javítási ajánlatot. A szolgáltatás jóváhagyás és fizetési megerősítés után kezdődik.`,
+                it: `Riceverete presto un preventivo di riparazione. Il servizio inizia dopo l'approvazione e la conferma del pagamento.`,
+                pl: `Wkrótce otrzymasz wycenę naprawy. Usługa rozpocznie się po zatwierdzeniu i potwierdzeniu płatności.`,
+                ro: `Veți primi în curând o ofertă de reparare. Serviciul începe după aprobare și confirmare plată.`,
+                sr: `Uskoro ćete primiti ponudu za popravku. Servis počinje nakon odobrenja i potvrde plaćanja.`,
+                sk: `Čoskoro dostanete ponuku na opravu. Služba začína po schválení a potvrde platby.`,
+                sl: `Kmalu boste prejeli ponudbo za popravilo. Storitev se začne po odobritvi in potvrditvi plačila.`,
+                es: `Pronto recibirá un presupuesto de reparación. El servicio comienza después de la aprobación y confirmación de pago.`
+            },
+            'reconnect': {
+                en: `My name is [Advisor Name] and I'm from HP Support. I see you were disconnected from chat. Please contact us with case [Case Ref#]. Available Monday-Friday, 8:00 AM - 6:00 PM. Chat: https://support.hp.com/contact`,
+                cs: `Jmenuji se [Advisor Name] z HP Support. Byli jste odpojeni. Kontaktujte nás s případem [Case Ref#]. Po-Pá 8:00-18:00. Chat: https://support.hp.com/contact`,
+                nl: `Ik ben [Advisor Name] van HP Support. U bent verbroken. Neem contact op met case [Case Ref#]. Ma-Vr 8:00-18:00. Chat: https://support.hp.com/contact`,
+                hu: `[Advisor Name] vagyok a HP Support csapatból. Le lett szakítva. Forduljon esettel [Case Ref#]. H-P 8:00-18:00. Chat: https://support.hp.com/contact`,
+                it: `Sono [Advisor Name] di HP Support. Siete disconnessi. Contattateci con caso [Case Ref#]. Lun-Ven 8:00-18:00. Chat: https://support.hp.com/contact`,
+                pl: `Jestem [Advisor Name] z HP Support. Zostałeś rozłączony. Skontaktuj się z sprawą [Case Ref#]. Pn-Pt 8:00-18:00. Chat: https://support.hp.com/contact`,
+                ro: `Sunt [Advisor Name] din HP Support. Ați fost deconectat. Contactați cu cazul [Case Ref#]. Lun-Vin 8:00-18:00. Chat: https://support.hp.com/contact`,
+                sr: `Ja sam [Advisor Name] iz HP Support. Bili ste isključeni. Kontaktirajte sa slučajem [Case Ref#]. Pon-Pet 8:00-18:00. Chat: https://support.hp.com/contact`,
+                sk: `Som [Advisor Name] z HP Support. Boli ste odpojení. Kontaktujte s prípadom [Case Ref#]. Po-Pia 8:00-18:00. Chat: https://support.hp.com/contact`,
+                sl: `Sem [Advisor Name] iz HP Support. Bili ste prekinjena. Kontaktirajte s primerom [Case Ref#]. Pon-Pet 8:00-18:00. Chat: https://support.hp.com/contact`,
+                es: `Soy [Advisor Name] de HP Support. Fue desconectado. Contacte con caso [Case Ref#]. Lun-Vie 8:00-18:00. Chat: https://support.hp.com/contact`
+            }
+        };
+
+        const labels = {
+            'hello': { en: 'Hello', cs: 'Dobrý den', nl: 'Hallo', hu: 'Tisztelt', it: 'Salve', pl: 'Cześć', ro: 'Bună', sr: 'Zdravo', sk: 'Ahoj', sl: 'Zdravo', es: 'Hola' },
+            'issue': { en: 'Issue Reported', cs: 'Hlášený problém', nl: 'Gemelde probleem', hu: 'Bejelentett probléma', it: 'Problema segnalato', pl: 'Zgłoszony problem', ro: 'Problemă raportată', sr: 'Prijavljen problem', sk: 'Hlásený problém', sl: 'Prijavljeni problem', es: 'Problema reportado' },
+            'caseRef': { en: 'Case Ref#', cs: 'Číslo:', nl: 'Zaakref#', hu: 'Eset:', it: 'Caso#', pl: 'Sprawy#', ro: 'Caz#', sr: 'Slučaja#', sk: 'Prípad#', sl: 'Primera#', es: 'Caso#' },
+            'serial': { en: 'HP Serial#', cs: 'Sériové#', nl: 'Serienummer#', hu: 'Sorozat#', it: 'Seriale#', pl: 'Seryjny#', ro: 'Serial#', sr: 'Serijat#', sk: 'Sériové#', sl: 'Serijsko#', es: 'Serie#' },
+            'regards': { en: 'Regards', cs: 'Pozdravy', nl: 'Groeten', hu: 'Üdvözlettel', it: 'Cordiali saluti', pl: 'Pozdrawiam', ro: 'Salutări', sr: 'Pozdrav', sk: 'Pozdravy', sl: 'Spoštljivo', es: 'Saludos' },
+        };
+
+        document.getElementById('template').addEventListener('change', function() {
+            document.getElementById('customNotesSection').style.display = this.value === 'custom' ? 'grid' : 'none';
+        });
+
+        function generateEmail() {
+            const lang = document.getElementById('language').value;
+            const tpl = document.getElementById('template').value;
+            const customer = document.getElementById('customerName').value || '[Customer]';
+            const advisor = document.getElementById('advisorName').value || '[Advisor]';
+            const caseNum = document.getElementById('caseRef').value || '[Case#]';
+            const serial = document.getElementById('serialNumber').value || '[Serial#]';
+            const issue = document.getElementById('issueDetails').value || '[Issue]';
+            const context = document.getElementById('additionalContext').value || '';
+            const custom = document.getElementById('customNotes').value || '';
+
+            let body = '';
+            if (tpl === 'custom') {
+                body = custom || '[Enter custom message]';
+                if (context) body += '\n\n' + context;
+            } else {
+                body = templates[tpl][lang] || templates[tpl]['en'];
+            }
+
+            body = body.replace(/\[Advisor Name\]/g, advisor).replace(/\[Case Ref#\]/g, caseNum);
+
+            const hello = labels.hello[lang] || labels.hello.en;
+            const issueLabel = labels.issue[lang] || labels.issue.en;
+            const caseLabel = labels.caseRef[lang] || labels.caseRef.en;
+            const serialLabel = labels.serial[lang] || labels.serial.en;
+            const regardsLabel = labels.regards[lang] || labels.regards.en;
+
+            const email = `${hello} ${customer},\n\n${issueLabel}: ${issue}\n${caseLabel}: ${caseNum}\n${serialLabel}: ${serial}\n\n${body}\n\n${regardsLabel},\n${advisor}\nHP Support\nhttps://support.hp.com/contact`;
+
+            document.getElementById('emailPreview').textContent = email;
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('emailPreview').textContent;
+            if (!text || text.includes('Generated')) {
+                alert('Generate email first!');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                const fb = document.getElementById('copyFeedback');
+                fb.classList.add('show');
+                setTimeout(() => fb.classList.remove('show'), 3000);
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('language').value = 'en';
+            document.getElementById('template').value = 'status-update';
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+            document.getElementById('emailPreview').innerHTML = '<div class="placeholder">Generated email will appear here...</div>';
+            document.getElementById('customNotesSection').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
