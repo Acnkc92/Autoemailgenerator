@@ -319,13 +319,6 @@
                     </div>
                 </div>
 
-                <div class="form-row full">
-                    <div>
-                        <label for="additionalContext">Additional Context</label>
-                        <textarea id="additionalContext" placeholder="Optional additional information"></textarea>
-                    </div>
-                </div>
-
                 <div id="customNotesSection" class="form-row full" style="display: none;">
                     <div>
                         <label for="customNotes">Custom Email Body</label>
@@ -439,7 +432,27 @@
             document.getElementById('customNotesSection').style.display = this.value === 'custom' ? 'grid' : 'none';
         });
 
-        function generateEmail() {
+        // Translate text using MyMemory API
+        async function translateText(text, targetLanguage) {
+            if (targetLanguage === 'en' || !text) {
+                return text;
+            }
+
+            try {
+                const response = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=en|' + targetLanguage);
+                const data = await response.json();
+
+                if (data.responseStatus === 200 && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+            } catch (error) {
+                console.error('Translation error:', error);
+            }
+
+            return text;
+        }
+
+        async function generateEmail() {
             const lang = document.getElementById('language').value;
             const tpl = document.getElementById('template').value;
             const customer = document.getElementById('customerName').value || '[Customer]';
@@ -447,33 +460,56 @@
             const caseNum = document.getElementById('caseRef').value || '[Case#]';
             const serial = document.getElementById('serialNumber').value || '[Serial#]';
             const issue = document.getElementById('issueDetails').value || '[Issue]';
-            const context = document.getElementById('additionalContext').value || '';
             const custom = document.getElementById('customNotes').value || '';
 
-            let body = '';
-            if (tpl === 'custom') {
-                body = custom || '[Enter custom message]';
-                if (context) body += '\n\n' + context;
-            } else {
-                body = templates[tpl][lang] || templates[tpl]['en'];
+            // Show loading state
+            const preview = document.getElementById('emailPreview');
+            preview.innerHTML = '<div class="placeholder">Generating email...</div>';
+
+            try {
+                let body = '';
+                
+                // Get template body
+                if (tpl === 'custom') {
+                    body = custom || '[Enter custom message]';
+                    // Translate custom email body
+                    if (lang !== 'en' && body !== '[Enter custom message]') {
+                        body = await translateText(body, lang);
+                    }
+                } else {
+                    body = templates[tpl][lang] || templates[tpl]['en'];
+                }
+
+                // Replace placeholders
+                body = body.replace(/\[Advisor Name\]/g, advisor).replace(/\[Case Ref#\]/g, caseNum);
+
+                // Translate issue if not in English
+                let translatedIssue = issue;
+                if (lang !== 'en' && issue !== '[Issue]') {
+                    translatedIssue = await translateText(issue, lang);
+                }
+
+                // Get translated labels
+                const hello = labels.hello[lang] || labels.hello.en;
+                const issueLabel = labels.issue[lang] || labels.issue.en;
+                const caseLabel = labels.caseRef[lang] || labels.caseRef.en;
+                const serialLabel = labels.serial[lang] || labels.serial.en;
+                const regardsLabel = labels.regards[lang] || labels.regards.en;
+
+                // Build final email
+                const email = `${hello} ${customer},\n\n${issueLabel}: ${translatedIssue}\n${caseLabel}: ${caseNum}\n${serialLabel}: ${serial}\n\n${body}\n\n${regardsLabel},\n${advisor}\nHP Support\nhttps://support.hp.com/contact`;
+
+                // Display email
+                preview.textContent = email;
+            } catch (error) {
+                console.error('Error:', error);
+                preview.innerHTML = '<div class="placeholder">Error generating email. Please try again.</div>';
             }
-
-            body = body.replace(/\[Advisor Name\]/g, advisor).replace(/\[Case Ref#\]/g, caseNum);
-
-            const hello = labels.hello[lang] || labels.hello.en;
-            const issueLabel = labels.issue[lang] || labels.issue.en;
-            const caseLabel = labels.caseRef[lang] || labels.caseRef.en;
-            const serialLabel = labels.serial[lang] || labels.serial.en;
-            const regardsLabel = labels.regards[lang] || labels.regards.en;
-
-            const email = `${hello} ${customer},\n\n${issueLabel}: ${issue}\n${caseLabel}: ${caseNum}\n${serialLabel}: ${serial}\n\n${body}\n\n${regardsLabel},\n${advisor}\nHP Support\nhttps://support.hp.com/contact`;
-
-            document.getElementById('emailPreview').textContent = email;
         }
 
         function copyToClipboard() {
             const text = document.getElementById('emailPreview').textContent;
-            if (!text || text.includes('Generated')) {
+            if (!text || text.includes('Generated') || text.includes('Generating')) {
                 alert('Generate email first!');
                 return;
             }
