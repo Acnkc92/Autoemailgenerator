@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HP Customer Support Email Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>HP Customer Support Email Generator</h1>
+                <p class="subtitle">Professional multilingual email generation for HP support advisors</p>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>Email Configuration</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="language">Select Language *</label>
+                        <select id="language" required>
+                            <option value="en">English</option>
+                            <option value="cs">Czech</option>
+                            <option value="nl">Dutch</option>
+                            <option value="hu">Hungarian</option>
+                            <option value="it">Italian</option>
+                            <option value="pl">Polish</option>
+                            <option value="ro">Romanian</option>
+                            <option value="sr">Serbian</option>
+                            <option value="sk">Slovak</option>
+                            <option value="sl">Slovenian</option>
+                            <option value="es">Spanish</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="template">Select Template *</label>
+                        <select id="template" required>
+                            <option value="status-update">Status Update</option>
+                            <option value="closure">Closure Email</option>
+                            <option value="part-backordered">Part Backordered</option>
+                            <option value="trade">Trade</option>
+                            <option value="reconnect">Reconnect Email</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerName">Customer Name *</label>
+                        <input type="text" id="customerName" placeholder="Enter customer name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="advisorName">Advisor Name *</label>
+                        <input type="text" id="advisorName" placeholder="Enter your name" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="caseRef">Case Reference Number *</label>
+                        <input type="text" id="caseRef" placeholder="e.g., HPC-2024-123456" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serialNumber">HP Serial Number *</label>
+                        <input type="text" id="serialNumber" placeholder="e.g., SN-ABC-123456" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="issueDetails">Issue Details *</label>
+                        <textarea id="issueDetails" placeholder="Describe the issue reported by the customer" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="additionalContext">Additional Context</label>
+                        <textarea id="additionalContext" placeholder="Add any additional information (optional)" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div id="customNotesSection" class="form-row" style="display: none;">
+                    <div class="form-group full-width">
+                        <label for="customNotes">Custom Email Body</label>
+                        <textarea id="customNotes" placeholder="Enter your custom email message (used when 'Custom' template is selected)" rows="4"></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateEmail()">Generate Email</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-header">
+                    <h2>Email Preview</h2>
+                    <button class="btn btn-copy" onclick="copyToClipboard()">
+                        <span class="copy-icon">📋</span>
+                        Copy to Clipboard
+                    </button>
+                </div>
+                
+                <div class="email-preview" id="emailPreview">
+                    <div class="placeholder">Generated email will appear here...</div>
+                </div>
+                
+                <div id="copyFeedback" class="copy-feedback">✓ Email copied to clipboard!</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>HP Customer Support Email Generator v1.0 | Multilingual Support | Enterprise Ready</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
